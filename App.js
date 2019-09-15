@@ -82,7 +82,7 @@ class App extends React.Component {
                 }
             },
             {
-                initialRouteName: "result"
+                initialRouteName: "camera"
             }
         );
         const AppNavigation = createStackNavigator(
@@ -107,7 +107,7 @@ class App extends React.Component {
                 }
             },
             {
-                // initialRouteName: "home"
+                initialRouteName: "scan"
             }
         );
         const RootNavigation = createBottomTabNavigator(

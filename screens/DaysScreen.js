@@ -18,56 +18,56 @@ class DaysScreen extends React.Component {
                 {
                     id: 1,
                     name: "Day 1",
-                    subtitle: "date",
+                    subtitle: new Date("9/29/2019"),
                     linearGradientColors: ["#FF9800", "#F44336"]
                 },
                 {
                     id: 2,
                     name: "Day 2",
-                    subtitle: "date",
-                    linearGradientColors: ["#3F51B5", "#2196F3"]
+                    subtitle: new Date("9/30/2019"),
+                    linearGradientColors: ["#FF0000", "#BF2121"]
                 },
                 {
                     id: 3,
                     name: "Day 3",
-                    subtitle: "date",
-                    linearGradientColors: ["#FFD600", "#FF9800"]
+                    subtitle: new Date("10/1/2019"),
+                    linearGradientColors: ["#f4f1f1", "#dfd8d8"]
                 },
                 {
                     id: 4,
                     name: "Day 4",
-                    subtitle: "date",
-                    linearGradientColors: ["#4CAF50", "#8BC34A"]
+                    subtitle: new Date("10/2/2019"),
+                    linearGradientColors: ["#2196F3", "#3F51B5"]
                 },
                 {
                     id: 5,
                     name: "Day 5",
-                    subtitle: "date",
-                    linearGradientColors: ["#F44336", "#E91E63"]
+                    subtitle: new Date("10/3/2019"),
+                    linearGradientColors: ["#FFD600", "#FF9800"]
                 },
                 {
                     id: 6,
                     name: "Day 6",
-                    subtitle: "date",
-                    linearGradientColors: ["#3F51B5", "#2196F3"]
+                    subtitle: new Date("10/4/2019"),
+                    linearGradientColors: ["#8BC34A", "#4CAF50"]
                 },
                 {
                     id: 7,
                     name: "Day 7",
-                    subtitle: "date",
-                    linearGradientColors: ["#FFD600", "#FF9800"]
+                    subtitle: new Date("10/5/2019"),
+                    linearGradientColors: ["#b301b3", "#800080"]
                 },
                 {
                     id: 8,
                     name: "Day 8",
-                    subtitle: "date",
-                    linearGradientColors: ["#4CAF50", "#8BC34A"]
+                    subtitle: new Date("10/6/2019"),
+                    linearGradientColors: ["#808080", "#646262"]
                 },
                 {
                     id: 9,
                     name: "Day 9",
-                    subtitle: "date",
-                    linearGradientColors: ["#F44336", "#E91E63"]
+                    subtitle: new Date("10/7/2019"),
+                    linearGradientColors: ["#00A989", "#068a71"]
                 }
             ]
         };
@@ -106,7 +106,7 @@ class DaysScreen extends React.Component {
                                     fontWeight: "bold"
                                 }}
                                 subtitleStyle={{ color: "white" }}
-                                subtitle={item.subtitle}
+                                subtitle={item.subtitle.toDateString()}
                                 chevronColor="white"
                                 chevron
                                 containerStyle={{
@@ -115,9 +115,31 @@ class DaysScreen extends React.Component {
                                     borderRadius: 8,
                                     width: "90%"
                                 }}
-                                onPress={() =>
-                                    this.props.navigation.navigate("camera")
-                                }
+                                onPress={() => {
+                                    let day = "";
+                                    if (item.id === 1) {
+                                        day = "9-29-2019";
+                                    } else if (item.id === 2) {
+                                        day = "9-30-2019";
+                                    } else if (item.id === 3) {
+                                        day = "10-1-2019";
+                                    } else if (item.id === 4) {
+                                        day = "10-2-2019";
+                                    } else if (item.id === 5) {
+                                        day = "10-3-2019";
+                                    } else if (item.id === 6) {
+                                        day = "10-4-2019";
+                                    } else if (item.id === 7) {
+                                        day = "10-5-2019";
+                                    } else if (item.id === 8) {
+                                        day = "10-6-2019";
+                                    } else if (item.id === 9) {
+                                        day = "10-7-2019";
+                                    }
+                                    this.props.navigation.navigate("camera", {
+                                        day
+                                    });
+                                }}
                             />
                         );
                     }}

@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Button } from "react-native-elements";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { Button, Image } from "react-native-elements";
 import * as Permissions from "expo-permissions";
 import { BarCodeScanner } from "expo-barcode-scanner";
 
@@ -8,6 +8,10 @@ import { connect } from "react-redux";
 import { cameraPermissionAction } from "../actions/appActions";
 
 import baseStyle from "../styles/base";
+
+let WINDOW_WIDTH = Dimensions.get("window").width;
+
+WINDOW_WIDTH = WINDOW_WIDTH * 0.7;
 
 class CameraScreen extends React.Component {
     constructor(props) {
@@ -27,6 +31,8 @@ class CameraScreen extends React.Component {
     handleBarCodeScanned = ({ type, data }) => {
         this.setState({ scanned: true });
         console.log(type, data);
+        const day = this.props.navigation.getParam("day", null);
+        this.props.navigation.navigate("result", { day, qr: data });
     };
 
     render() {
@@ -65,27 +71,26 @@ class CameraScreen extends React.Component {
         }
 
         return (
-            <BarCodeScanner
-                onBarCodeScanned={
-                    scanned ? undefined : this.handleBarCodeScanned
-                }
-                style={[styles.container]}
-            >
-                <View style={styles.layerTop}></View>
-                <View style={styles.layerCenter}>
-                    <View style={styles.layerLeft} />
-                    <View style={styles.focused} />
-                    <View style={styles.layerRight} />
-                </View>
-                <View style={styles.layerBottom}>
-                    <Button
-                        title="cancel"
-                        type="clear"
-                        titleStyle={styles.buttonTitile}
-                        onPress={() => this.props.navigation.navigate("days")}
+            <View style={[baseStyle.container]}>
+                <BarCodeScanner
+                    onBarCodeScanned={
+                        scanned ? undefined : this.handleBarCodeScanned
+                    }
+                    style={[
+                        StyleSheet.absoluteFill,
+                        {
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }
+                    ]}
+                >
+                    <Image
+                        source={require("../assets/scanner.png")}
+                        style={{ width: WINDOW_WIDTH, height: WINDOW_WIDTH }}
                     />
-                </View>
-            </BarCodeScanner>
+                </BarCodeScanner>
+            </View>
         );
     }
 }

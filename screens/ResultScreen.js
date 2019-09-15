@@ -1,15 +1,84 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import {
+    Text,
+    View,
+    StyleSheet,
+    BackHandler,
+    ToastAndroid
+} from "react-native";
 import { Icon, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
+import { qrValidationApi } from "../apis/qrApis";
 
 class ResultScreen extends React.Component {
+    _didFocusSubscription;
+    _willBlurSubscription;
+
     constructor(props) {
         super(props);
         this.state = {
-            screen: "out"
+            screen: "loading" // loading, new, in, out, error
         };
+
+        this._didFocusSubscription = props.navigation.addListener(
+            "didFocus",
+            payload =>
+                BackHandler.addEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
     }
+    async componentDidMount() {
+        // back handling
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
+
+        // fetching day and qr details
+        const day = this.props.navigation.getParam("day", null);
+        const qr = this.props.navigation.getParam("qr", null);
+        console.log("result", day, qr);
+        const data = { day, qr };
+        await this.validQr(data);
+    }
+
+    componentWillUnmount() {
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
+        this._didFocusSubscription && this._didFocusSubscription.remove();
+        this._willBlurSubscription && this._willBlurSubscription.remove();
+    }
+
+    onBackButtonPressAndroid = () => {
+        const day = this.props.navigation.getParam("day", null);
+        if (day) {
+            this.props.navigation.navigate("camera", { day });
+        }
+        return true;
+    };
+
+    validQr = async data => {
+        try {
+            const response = await qrValidationApi(data);
+            this.setState({ screen: response.message });
+        } catch (err) {
+            this.setState({ screen: "error" });
+            ToastAndroid.show(err.message, ToastAndroid.LONG);
+        }
+    };
+
     render() {
         if (this.state.screen === "new") {
             return (
@@ -33,7 +102,13 @@ class ResultScreen extends React.Component {
                         }}
                         ViewComponent={LinearGradient}
                         titleStyle={styles.buttonText}
-                        onPress={() => this.props.navigation.navigate("camera")}
+                        onPress={() => {
+                            const day = this.props.navigation.getParam(
+                                "day",
+                                null
+                            );
+                            this.props.navigation.navigate("camera", { day });
+                        }}
                     />
                 </LinearGradient>
             );
@@ -56,7 +131,13 @@ class ResultScreen extends React.Component {
                         }}
                         ViewComponent={LinearGradient}
                         titleStyle={styles.buttonText}
-                        onPress={() => this.props.navigation.navigate("camera")}
+                        onPress={() => {
+                            const day = this.props.navigation.getParam(
+                                "day",
+                                null
+                            );
+                            this.props.navigation.navigate("camera", { day });
+                        }}
                     />
                 </LinearGradient>
             );
@@ -64,7 +145,7 @@ class ResultScreen extends React.Component {
         if (this.state.screen === "out") {
             return (
                 <LinearGradient
-                    colors={["#F44336", "#E91E63"]}
+                    colors={["#FF0000", "#BF2121"]}
                     style={styles.container}
                 >
                     <Icon name="ios-close" type="ionicon" size={100} />
@@ -79,9 +160,42 @@ class ResultScreen extends React.Component {
                         }}
                         ViewComponent={LinearGradient}
                         titleStyle={styles.buttonText}
-                        onPress={() => this.props.navigation.navigate("camera")}
+                        onPress={() => {
+                            const day = this.props.navigation.getParam(
+                                "day",
+                                null
+                            );
+                            this.props.navigation.navigate("camera", { day });
+                        }}
                     />
                 </LinearGradient>
+            );
+        }
+        if (this.state.screen === "error") {
+            return (
+                <View style={styles.container}>
+                    <Icon name="ios-sync" type="ionicon" size={100} />
+                    <Text style={styles.title}>Can't reach to server</Text>
+                    <Text style={styles.title}>Please retry again!</Text>
+                    <Button
+                        title="RETRY"
+                        buttonStyle={styles.button}
+                        linearGradientProps={{
+                            colors: ["#FF9800", "#F44336"],
+                            start: [1, 0],
+                            end: [0.2, 0]
+                        }}
+                        ViewComponent={LinearGradient}
+                        titleStyle={styles.buttonText}
+                        onPress={() => {
+                            const day = this.props.navigation.getParam(
+                                "day",
+                                null
+                            );
+                            this.props.navigation.navigate("camera", { day });
+                        }}
+                    />
+                </View>
             );
         }
         return (
@@ -98,7 +212,10 @@ class ResultScreen extends React.Component {
                     }}
                     ViewComponent={LinearGradient}
                     titleStyle={styles.buttonText}
-                    onPress={() => this.props.navigation.navigate("camera")}
+                    onPress={() => {
+                        const day = this.props.navigation.getParam("day", null);
+                        this.props.navigation.navigate("camera", { day });
+                    }}
                 />
             </View>
         );
