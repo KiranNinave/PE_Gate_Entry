@@ -1,4 +1,5 @@
 import React from "react";
+import { Audio } from "expo-av";
 import {
     Text,
     View,
@@ -9,6 +10,8 @@ import {
 import { Icon, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { qrValidationApi } from "../apis/qrApis";
+
+const soundObject = new Audio.Sound();
 
 class ResultScreen extends React.Component {
     _didFocusSubscription;
@@ -69,9 +72,21 @@ class ResultScreen extends React.Component {
         return true;
     };
 
+    playRingtone = async type => {
+        try {
+            if (type === "out") {
+                await soundObject.loadAsync(require("../assets/out.mp3"));
+                await soundObject.playAsync();
+            }
+        } catch (err) {
+            ToastAndroid.show(err.message, ToastAndroid.LONG);
+        }
+    };
+
     validQr = async data => {
         try {
             const response = await qrValidationApi(data);
+            await this.playRingtone(response.message);
             this.setState({ screen: response.message });
         } catch (err) {
             this.setState({ screen: "error" });
