@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Button, Image } from "react-native-elements";
 import * as Permissions from "expo-permissions";
 import { BarCodeScanner } from "expo-barcode-scanner";
-
 import { connect } from "react-redux";
 import { cameraPermissionAction } from "../actions/appActions";
 
@@ -95,9 +94,6 @@ class CameraScreen extends React.Component {
     }
 }
 
-let color = "#000";
-let opacity = 0.6;
-
 const styles = StyleSheet.create({
     content: {
         flex: 1,
@@ -121,38 +117,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "column"
-    },
-    layerTop: {
-        flex: 1,
-        backgroundColor: color,
-        opacity
-    },
-    layerCenter: {
-        flex: 2,
-        flexDirection: "row"
-    },
-    layerLeft: {
-        flex: 1,
-        backgroundColor: color,
-        opacity
-    },
-    focused: {
-        flex: 10,
-        borderWidth: 2,
-        borderColor: "#fff",
-        borderStyle: "solid"
-    },
-    layerRight: {
-        flex: 1,
-        backgroundColor: color,
-        opacity
-    },
-    layerBottom: {
-        flex: 1,
-        backgroundColor: color,
-        opacity,
-        justifyContent: "center",
-        alignItems: "center"
     }
 });
 

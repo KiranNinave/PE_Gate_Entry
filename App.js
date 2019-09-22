@@ -2,6 +2,7 @@ import React from "react";
 import { SplashScreen } from "expo";
 import * as Font from "expo-font";
 import * as Permissions from "expo-permissions";
+import { Asset } from "expo-asset";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "react-native-elements";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
@@ -49,6 +50,14 @@ class App extends React.Component {
             UbuntuLight: require("./assets/fonts/Ubuntu-Light.ttf"),
             UbuntuLightItalic: require("./assets/fonts/Ubuntu-Light-Italic.ttf")
         });
+
+        // load image
+        await Asset.fromModule(require("./assets/logo.png")).downloadAsync();
+        await Asset.fromModule(require("./assets/scanner.png")).downloadAsync();
+
+        // load sound
+        await Asset.fromModule(require("./assets/out.mp3")).downloadAsync();
+
         this.setState({ fontLoaded: true });
         SplashScreen.hide();
     }
