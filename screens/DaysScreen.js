@@ -3,7 +3,7 @@ import {
     Text,
     StyleSheet,
     View,
-    TouchableHighlight,
+    TouchableOpacity,
     FlatList
 } from "react-native";
 import { ListItem } from "react-native-elements";
@@ -84,7 +84,7 @@ class DaysScreen extends React.Component {
                         let i = index;
                         return (
                             <ListItem
-                                component={TouchableHighlight}
+                                component={TouchableOpacity}
                                 friction={90}
                                 tension={100}
                                 activeScale={0.95}

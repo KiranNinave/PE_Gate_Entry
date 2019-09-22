@@ -1,6 +1,14 @@
 import React from "react";
-import { ScrollView, Text, View, StyleSheet } from "react-native";
-import { Button } from "react-native-elements";
+import {
+    ScrollView,
+    Text,
+    View,
+    StyleSheet,
+    Alert,
+    BackHandler,
+    Dimensions
+} from "react-native";
+import { Button, Image } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { connect } from "react-redux";
 
@@ -8,22 +16,66 @@ import buttonStyle from "../styles/button";
 
 import baseStyle from "../styles/base";
 
+let SCREEN_WIDTH = Dimensions.get("window").width;
+SCREEN_WIDTH = SCREEN_WIDTH * 0.85;
+
 class HomeScreen extends React.Component {
+    _didFocusSubscription;
+    _willBlurSubscription;
+
     constructor(props) {
         super(props);
-        this.state = {
-            clock: `${new Date().getHours()} : ${new Date().getMinutes()}`,
-            date: `${new Date().toDateString()}`
-        };
+
+        this._didFocusSubscription = props.navigation.addListener(
+            "didFocus",
+            payload =>
+                BackHandler.addEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
     }
+
     componentDidMount() {
-        setInterval(() => {
-            this.setState({
-                clock: `${new Date().getHours()} : ${new Date().getMinutes()}`,
-                date: `${new Date().toDateString()}`
-            });
-        }, 1000 * 60); // tick on 1 minute
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
     }
+
+    componentWillUnmount() {
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
+        this._didFocusSubscription && this._didFocusSubscription.remove();
+        this._willBlurSubscription && this._willBlurSubscription.remove();
+    }
+
+    onBackButtonPressAndroid = () => {
+        Alert.alert(
+            "Exit App",
+            "Do you want to exit?",
+            [
+                {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "Yes", onPress: () => BackHandler.exitApp() }
+            ],
+            { cancelable: false }
+        );
+        return true;
+    };
 
     onScan = () => {
         this.props.navigation.navigate("days");
@@ -33,9 +85,12 @@ class HomeScreen extends React.Component {
             <ScrollView contentContainerStyle={baseStyle.container}>
                 <Text style={baseStyle.headerTitle}>HOME</Text>
                 <View style={styles.content}>
+                    <View></View>
                     <View>
-                        <Text style={styles.clock}>{this.state.clock}</Text>
-                        <Text style={styles.date}>{this.state.date}</Text>
+                        <Image
+                            source={require("../assets/logo.png")}
+                            style={styles.logo}
+                        />
                     </View>
                     <View>
                         {this.props.username && (
@@ -82,6 +137,10 @@ const styles = StyleSheet.create({
         color: "#FF9800",
         fontFamily: "UbuntuBold",
         fontSize: 18
+    },
+    logo: {
+        minWidth: SCREEN_WIDTH,
+        minHeight: SCREEN_WIDTH - parseInt(SCREEN_WIDTH / (SCREEN_WIDTH / 20))
     }
 });
 

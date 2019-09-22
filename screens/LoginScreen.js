@@ -5,7 +5,9 @@ import {
     StyleSheet,
     Text,
     UIManager,
-    ToastAndroid
+    ToastAndroid,
+    Alert,
+    BackHandler
 } from "react-native";
 import { connect } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,6 +20,9 @@ UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 
 class LoginScreen extends React.Component {
+    _didFocusSubscription;
+    _willBlurSubscription;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -27,10 +32,59 @@ class LoginScreen extends React.Component {
             password: ""
         };
         this.isComponentMounted = true;
+
+        this._didFocusSubscription = props.navigation.addListener(
+            "didFocus",
+            payload =>
+                BackHandler.addEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
     }
+    componentDidMount() {
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
+    }
+
     componentWillUnmount() {
         this.isComponentMounted = false;
+
+        this._willBlurSubscription = this.props.navigation.addListener(
+            "willBlur",
+            payload =>
+                BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                )
+        );
+        this._didFocusSubscription && this._didFocusSubscription.remove();
+        this._willBlurSubscription && this._willBlurSubscription.remove();
     }
+
+    onBackButtonPressAndroid = () => {
+        Alert.alert(
+            "Exit App",
+            "Do you want to exit?",
+            [
+                {
+                    text: "No",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "Yes", onPress: () => BackHandler.exitApp() }
+            ],
+            { cancelable: false }
+        );
+        return true;
+    };
+
     login = async () => {
         if (
             this.state.username.length !== 13 &&
