@@ -11,8 +11,6 @@ import { Icon, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import { qrValidationApi } from "../apis/qrApis";
 
-const soundObject = new Audio.Sound();
-
 class ResultScreen extends React.Component {
     _didFocusSubscription;
     _willBlurSubscription;
@@ -75,6 +73,7 @@ class ResultScreen extends React.Component {
     playRingtone = async type => {
         try {
             if (type === "out") {
+                const soundObject = new Audio.Sound();
                 await soundObject.loadAsync(require("../assets/out.mp3"));
                 await soundObject.playAsync();
             }
@@ -106,7 +105,7 @@ class ResultScreen extends React.Component {
                         type="ionicon"
                         size={100}
                     />
-                    <Text style={styles.title}>In</Text>
+                    <Text style={styles.title}>Valid</Text>
                     <Button
                         title="NEXT SCAN"
                         buttonStyle={styles.button}
@@ -164,7 +163,7 @@ class ResultScreen extends React.Component {
                     style={styles.container}
                 >
                     <Icon name="ios-close" type="ionicon" size={100} />
-                    <Text style={styles.title}>Out</Text>
+                    <Text style={styles.title}>Invalid</Text>
                     <Button
                         title="NEXT SCAN"
                         buttonStyle={styles.button}
