@@ -57,6 +57,8 @@ class App extends React.Component {
 
         // load sound
         await Asset.fromModule(require("./assets/out.mp3")).downloadAsync();
+        await Asset.fromModule(require("./assets/in.mp3")).downloadAsync();
+        await Asset.fromModule(require("./assets/new.mp3")).downloadAsync();
 
         this.setState({ fontLoaded: true });
         SplashScreen.hide();

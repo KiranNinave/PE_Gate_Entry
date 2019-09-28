@@ -18,7 +18,8 @@ class ResultScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            screen: "loading" // loading, new, in, out, error
+            screen: "loading", // loading, new, in, out, error
+            type: "user"
         };
 
         this._didFocusSubscription = props.navigation.addListener(
@@ -76,6 +77,14 @@ class ResultScreen extends React.Component {
                 const soundObject = new Audio.Sound();
                 await soundObject.loadAsync(require("../assets/out.mp3"));
                 await soundObject.playAsync();
+            } else if (type === "new") {
+                const soundObject = new Audio.Sound();
+                await soundObject.loadAsync(require("../assets/new.mp3"));
+                await soundObject.playAsync();
+            } else if (type === "in") {
+                const soundObject = new Audio.Sound();
+                await soundObject.loadAsync(require("../assets/in.mp3"));
+                await soundObject.playAsync();
             }
         } catch (err) {
             ToastAndroid.show(err.message, ToastAndroid.LONG);
@@ -86,7 +95,7 @@ class ResultScreen extends React.Component {
         try {
             const response = await qrValidationApi(data);
             await this.playRingtone(response.message);
-            this.setState({ screen: response.message });
+            this.setState({ screen: response.message, type: response.type });
         } catch (err) {
             this.setState({ screen: "error" });
             ToastAndroid.show(err.message, ToastAndroid.LONG);
@@ -106,6 +115,10 @@ class ResultScreen extends React.Component {
                         size={100}
                     />
                     <Text style={styles.title}>Valid</Text>
+                    {this.state.type && (
+                        <Text style={styles.subtitle}>{this.state.type}</Text>
+                    )}
+
                     <Button
                         title="NEXT SCAN"
                         buttonStyle={styles.button}
@@ -135,6 +148,9 @@ class ResultScreen extends React.Component {
                 >
                     <Icon name="ios-checkmark" type="ionicon" size={100} />
                     <Text style={styles.title}>Already In</Text>
+                    {this.state.type && (
+                        <Text style={styles.subtitle}>{this.state.type}</Text>
+                    )}
                     <Button
                         title="NEXT SCAN"
                         buttonStyle={styles.button}
@@ -164,6 +180,9 @@ class ResultScreen extends React.Component {
                 >
                     <Icon name="ios-close" type="ionicon" size={100} />
                     <Text style={styles.title}>Invalid</Text>
+                    {this.state.type && (
+                        <Text style={styles.subtitle}>{this.state.type}</Text>
+                    )}
                     <Button
                         title="NEXT SCAN"
                         buttonStyle={styles.button}
@@ -245,6 +264,10 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: "UbuntuBold",
         fontSize: 50
+    },
+    subtitle: {
+        fontFamily: "UbuntuBold",
+        fontSize: 30
     },
     buttonText: {
         fontFamily: "UbuntuBold",
