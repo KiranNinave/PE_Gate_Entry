@@ -29,7 +29,6 @@ class CameraScreen extends React.Component {
 
     handleBarCodeScanned = ({ type, data }) => {
         this.setState({ scanned: true });
-        console.log(type, data);
         const day = this.props.navigation.getParam("day", null);
         this.props.navigation.navigate("result", { day, qr: data });
     };

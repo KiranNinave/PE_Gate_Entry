@@ -45,7 +45,6 @@ class ResultScreen extends React.Component {
         // fetching day and qr details
         const day = this.props.navigation.getParam("day", null);
         const qr = this.props.navigation.getParam("qr", null);
-        console.log("result", day, qr);
         const data = { day, qr };
         await this.validQr(data);
     }
