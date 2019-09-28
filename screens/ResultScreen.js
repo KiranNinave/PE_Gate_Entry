@@ -93,7 +93,7 @@ class ResultScreen extends React.Component {
     validQr = async data => {
         try {
             const response = await qrValidationApi(data);
-            await this.playRingtone(response.message);
+            // await this.playRingtone(response.message);
             this.setState({ screen: response.message, type: response.type });
         } catch (err) {
             this.setState({ screen: "error" });
